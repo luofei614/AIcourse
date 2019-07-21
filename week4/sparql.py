@@ -3,12 +3,13 @@ IP = "127.0.0.1"
 Port = 9000
 username = "root"
 password = "123456"
-sparql='''select ?x ?y ?z   where
+sparql='''select ?s ?p ?o   where
 {
-  ?x ?y ?z.
+  ?s ?p ?o.
 }
 limit 10
 '''
+"""
 
 sparql='''select ?name   where
 {
@@ -63,7 +64,6 @@ select ?name ?count  where {
 }
 '''
 
-"""
 #order by
 sparql='''
 select * where {
@@ -72,7 +72,6 @@ select * where {
 ORDER BY DESC(?count)
 LIMIT 10
 '''
-
 
 """
 
