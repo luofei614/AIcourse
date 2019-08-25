@@ -2,6 +2,7 @@ import tensorflow as tf
 import matplotlib.pyplot as plt
 import  numpy as np
 imagevalue=tf.io.read_file('./img/1.jpeg')
+
 imagedata=tf.image.decode_jpeg(imagevalue)
 
 plt.imshow(imagedata)
