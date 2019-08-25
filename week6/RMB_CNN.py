@@ -39,19 +39,32 @@ def random_image(image):
     image=tf.image.random_contrast(image,0.7,1.3) #对比度
     return image
 
+data=tf.data.Dataset.from_tensor_slices((datas,labels))
+data=data.map(map_func=lambda x,y: (load_image(x),y))
+data=data.concatenate(data.map(map_func=lambda x,y: (random_image(x),y)))
+data=data.repeat(10).batch(10)
 
-train_data=[load_image(d) for d in datas]
-train_data+=[random_image(d) for d in train_data]
-train_data=np.array(train_data) #这里运行很慢， 需要换成dataset的形式。
-labels+=labels
+model = tf.keras.Sequential([
+    tf.keras.layers.Conv2D(32, (3, 3), activation='relu', input_shape=(100,100, 3)),
+    tf.keras.layers.MaxPooling2D((2, 2)),
+    tf.keras.layers.Conv2D(64, (3, 3), activation='relu'),
+    tf.keras.layers.MaxPooling2D((2, 2)),
+    tf.keras.layers.Conv2D(32, (3, 3), activation='relu'),
+    tf.keras.layers.MaxPooling2D((2, 2)),
+    tf.keras.layers.Flatten(),
+    tf.keras.layers.Dense(256, activation='relu'),
+    tf.keras.layers.Dropout(0.2),
+    tf.keras.layers.Dense(len(labelset), activation='softmax')
+])
 
+'''
 model=tf.keras.models.Sequential([
     tf.keras.layers.Flatten(input_shape=(100,100,3)),
     tf.keras.layers.Dense(128,activation="relu"),
     tf.keras.layers.Dropout(0.2),
     tf.keras.layers.Dense(len(labelset),activation="softmax")
 ])
-
+'''
 
 model.compile(optimizer=tf.keras.optimizers.Adam(),
               loss=tf.keras.losses.sparse_categorical_crossentropy,
@@ -59,7 +72,7 @@ model.compile(optimizer=tf.keras.optimizers.Adam(),
              )
 
 
-model.fit(train_data,labels,epochs=50)
+model.fit(data,epochs=5)
 
 imagedata=load_image('./img/2.jpeg')
 y=model.predict(np.array([imagedata]))
